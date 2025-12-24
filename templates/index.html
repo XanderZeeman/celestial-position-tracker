@@ -7,34 +7,29 @@
     <h1>Celestial Position Tracker</h1>
 
     <form method="post">
-        <label>Location (City, Country):</label><br>
-        <input name="address" required><br><br>
+        <label>Location:</label>
+        <input type="text" name="address" required>
 
-        <label>Celestial Object:</label><br>
-        <input name="object" required><br><br>
+        <label>Celestial Object:</label>
+        <input type="text" name="object" required>
 
-        <label>Date & Time (UTC, optional):</label><br>
-        <input name="datetime" placeholder="YYYY-MM-DD HH:MM:SS"><br><br>
+        <label>Date & Time (UTC):</label>
+        <input type="text" name="datetime" placeholder="YYYY-MM-DD HH:MM:SS">
 
         <button type="submit">Calculate</button>
     </form>
 
     {% if error %}
-        <p style="color:red">{{ error }}</p>
+        <p style="color:red;">{{ error }}</p>
     {% endif %}
 
     {% if result %}
         <h2>Result</h2>
-        <p><strong>Object:</strong> {{ result.object }}</p>
-        <p><strong>Altitude:</strong> {{ result.altitude }}°</p>
-        <p><strong>Azimuth:</strong> {{ result.azimuth }}° ({{ result.direction }})</p>
-        <p>
-            {% if result.visible %}
-                Look {{ result.direction }} above the horizon.
-            {% else %}
-                Object is below the horizon.
-            {% endif %}
-        </p>
+        <p>Object: {{ result.object }}</p>
+        <p>Altitude: {{ result.altitude }}°</p>
+        <p>Azimuth: {{ result.azimuth }}°</p>
+        <p>Direction: {{ result.direction }}</p>
+        <p>Visible: {{ "Yes" if result.visible else "No" }}</p>
     {% endif %}
 </body>
 </html>

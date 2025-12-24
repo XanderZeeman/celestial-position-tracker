@@ -1,8 +1,11 @@
 
 from geopy.geocoders import Nominatim
-from skyfield.api import load
-from skyfield.api import wgs84
-from datetime import datetime
+from skyfield.api import load, wgs84
+
+
+planets = load('de421.bsp')
+earth = planets['earth']
+ts = load.timescale()
 
 def get_observer_location(address):
     geolocator = Nominatim(user_agent="celestial_tracker")
@@ -11,10 +14,8 @@ def get_observer_location(address):
         return None
     return location.latitude, location.longitude
 
-def get_local_position(user_lat, user_lon, object_name, time_utc):
-    planets = load('de421.bsp')
-    earth = planets['earth']
 
+def get_local_position(user_lat, user_lon, object_name, time_utc):
     if object_name not in planets:
         mapping = {
             "Jupiter": "Jupiter barycenter",
@@ -28,9 +29,9 @@ def get_local_position(user_lat, user_lon, object_name, time_utc):
             return None
 
     target = planets[object_name]
-    ts = load.timescale()
     observer = earth + wgs84.latlon(user_lat, user_lon)
     t = ts.utc(*time_utc)
+
     astrometric = observer.at(t).observe(target).apparent()
     alt, az, _ = astrometric.altaz()
     return alt.degrees, az.degrees
