@@ -20,7 +20,7 @@
 
 <button onclick="submitQuery()">Find Position</button>
 
-<div id="result" class="card">
+<div id="result" class="card hidden">
     <h3 id="obj-name"></h3>
     <img id="obj-img" src="" alt="Celestial object" class="celestial-img">
     <div class="compass">
@@ -32,7 +32,6 @@
 </div>
 
 <script>
-/* Starfield */
 function createStarfield(numStars = 150) {
     const container = document.createElement("div");
     container.id = "starfield";
@@ -41,8 +40,9 @@ function createStarfield(numStars = 150) {
     for (let i = 0; i < numStars; i++) {
         const star = document.createElement("div");
         star.classList.add("star");
-        const size = Math.random() * 2 + 1;
-        star.style.width = star.style.height = `${size}px`;
+        const size = Math.random() * 2 + 1; // 1px - 3px
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
         star.style.top = `${Math.random() * 100}%`;
         star.style.left = `${Math.random() * 100}%`;
         star.style.animationDuration = `${Math.random() * 3 + 1}s`;
@@ -51,19 +51,18 @@ function createStarfield(numStars = 150) {
 }
 createStarfield();
 
-/* Submit query and display planet */
 async function submitQuery() {
     const resultDiv = document.getElementById("result");
     const objName = document.getElementById("obj-name");
     const altP = document.getElementById("alt");
     const azP = document.getElementById("az");
     const visP = document.getElementById("vis");
-    const objImg = document.getElementById("obj-img");
     const arrow = resultDiv.querySelector(".arrow");
+    const objImg = document.getElementById("obj-img");
 
-    // Reset
+    // Reset card state
     resultDiv.classList.remove("visible", "glow", "dimmed");
-    objImg.classList.remove("visible", "floating");
+    objImg.className = "celestial-img"; // reset animations
     objName.textContent = altP.textContent = azP.textContent = visP.textContent = "Calculating…";
 
     const payload = {
@@ -80,31 +79,37 @@ async function submitQuery() {
         });
         const data = await response.json();
 
-        if (!response.ok) throw new Error(data.error);
+        if (!response.ok) {
+            objName.textContent = "";
+            altP.innerHTML = `<span style="color:red">${data.error}</span>`;
+            azP.textContent = visP.textContent = "";
+            return;
+        }
 
-        // Update content
+        // Set card content
         objName.textContent = data.object;
         altP.textContent = `Altitude: ${data.altitude}°`;
         azP.textContent = `Azimuth: ${data.azimuth}° (${data.direction})`;
         visP.textContent = data.visible ? "Visible above horizon" : "Below horizon";
 
-        // Planet image
-        objImg.src = `/static/assets/images/${data.object.toLowerCase()}.png`;
+        // Set celestial image
+        let planetName = data.object.toLowerCase().trim();
+        objImg.src = `/static/assets/images/${planetName}.png`;
         setTimeout(() => objImg.classList.add("visible", "floating"), 50);
 
         // Rotate compass arrow
         arrow.style.transform = `rotate(${data.azimuth}deg)`;
 
-        // Show card style
+        // Card visibility & glow
         resultDiv.classList.add("visible", data.visible ? "glow" : "dimmed");
 
-        // Background day/night
+        // Background day/night toggle
         document.body.classList.toggle("day", data.altitude > 0);
         document.body.classList.toggle("night", data.altitude <= 0);
 
     } catch (err) {
         objName.textContent = "";
-        altP.innerHTML = `<span style="color:red">${err.message}</span>`;
+        altP.innerHTML = `<span style="color:red">Request failed</span>`;
         azP.textContent = visP.textContent = "";
     }
 }
