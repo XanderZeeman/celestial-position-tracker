@@ -32,6 +32,7 @@
 </div>
 
 <script>
+// ------------------- Starfield -------------------
 function createStarfield(numStars = 150) {
     const container = document.createElement("div");
     container.id = "starfield";
@@ -40,7 +41,7 @@ function createStarfield(numStars = 150) {
     for (let i = 0; i < numStars; i++) {
         const star = document.createElement("div");
         star.classList.add("star");
-        const size = Math.random() * 2 + 1; // 1px - 3px
+        const size = Math.random() * 2 + 1;
         star.style.width = `${size}px`;
         star.style.height = `${size}px`;
         star.style.top = `${Math.random() * 100}%`;
@@ -51,6 +52,7 @@ function createStarfield(numStars = 150) {
 }
 createStarfield();
 
+// ------------------- Query Handler -------------------
 async function submitQuery() {
     const resultDiv = document.getElementById("result");
     const objName = document.getElementById("obj-name");
@@ -60,9 +62,9 @@ async function submitQuery() {
     const arrow = resultDiv.querySelector(".arrow");
     const objImg = document.getElementById("obj-img");
 
-    // Reset card state
+    // Reset
     resultDiv.classList.remove("visible", "glow", "dimmed");
-    objImg.className = "celestial-img"; // reset animations
+    objImg.className = "celestial-img"; // reset animation
     objName.textContent = altP.textContent = azP.textContent = visP.textContent = "Calculating…";
 
     const payload = {
@@ -86,26 +88,38 @@ async function submitQuery() {
             return;
         }
 
-        // Set card content
+        // ------------------- Update Card -------------------
         objName.textContent = data.object;
         altP.textContent = `Altitude: ${data.altitude}°`;
         azP.textContent = `Azimuth: ${data.azimuth}° (${data.direction})`;
         visP.textContent = data.visible ? "Visible above horizon" : "Below horizon";
 
-        // Set celestial image
+        // Celestial image
         let planetName = data.object.toLowerCase().trim();
         objImg.src = `/static/assets/images/${planetName}.png`;
+
+        // Fallback to webp if PNG fails
+        objImg.onerror = function() {
+        objImg.onerror = null; // prevent infinite loop
+        objImg.src = `/static/assets/images/${planetName}.webp`;
+        };
+
         setTimeout(() => objImg.classList.add("visible", "floating"), 50);
 
-        // Rotate compass arrow
+        // Compass rotation
         arrow.style.transform = `rotate(${data.azimuth}deg)`;
 
         // Card visibility & glow
         resultDiv.classList.add("visible", data.visible ? "glow" : "dimmed");
 
-        // Background day/night toggle
-        document.body.classList.toggle("day", data.altitude > 0);
-        document.body.classList.toggle("night", data.altitude <= 0);
+        // Background day/night
+        if (data.altitude > 0) {
+            document.body.classList.add("day");
+            document.body.classList.remove("night");
+        } else {
+            document.body.classList.add("night");
+            document.body.classList.remove("day");
+        }
 
     } catch (err) {
         objName.textContent = "";
