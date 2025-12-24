@@ -1,35 +1,84 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Celestial Position Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b0e1a;
+            color: #eaeaea;
+            padding: 40px;
+        }
+        input, button {
+            padding: 8px;
+            margin: 6px 0;
+            width: 300px;
+        }
+        button {
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Celestial Position Tracker</h1>
 
-    <form method="post">
-        <label>Location:</label>
-        <input type="text" name="address" required>
+<h1>Celestial Position Tracker 🌌</h1>
 
-        <label>Celestial Object:</label>
-        <input type="text" name="object" required>
+<label>Location (City, Country)</label><br>
+<input id="address" placeholder="Toronto, Canada"><br>
 
-        <label>Date & Time (UTC):</label>
-        <input type="text" name="datetime" placeholder="YYYY-MM-DD HH:MM:SS">
+<label>Celestial Object</label><br>
+<input id="object" placeholder="Mars"><br>
 
-        <button type="submit">Calculate</button>
-    </form>
+<label>Date & Time (UTC, optional)</label><br>
+<input id="datetime" placeholder="YYYY-MM-DD HH:MM:SS"><br>
 
-    {% if error %}
-        <p style="color:red;">{{ error }}</p>
-    {% endif %}
+<button onclick="submitQuery()">Find Position</button>
 
-    {% if result %}
-        <h2>Result</h2>
-        <p>Object: {{ result.object }}</p>
-        <p>Altitude: {{ result.altitude }}°</p>
-        <p>Azimuth: {{ result.azimuth }}°</p>
-        <p>Direction: {{ result.direction }}</p>
-        <p>Visible: {{ "Yes" if result.visible else "No" }}</p>
-    {% endif %}
+<div id="result"></div>
+
+<script>
+async function submitQuery() {
+    const resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = "Calculating…";
+
+    const payload = {
+        address: document.getElementById("address").value,
+        object: document.getElementById("object").value,
+        datetime: document.getElementById("datetime").value
+    };
+
+    try {
+        const response = await fetch("/api/position", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            resultDiv.innerHTML = `<p style="color:red">${data.error}</p>`;
+            return;
+        }
+
+        resultDiv.innerHTML = `
+            <h3>${data.object}</h3>
+            <p>Altitude: ${data.altitude}°</p>
+            <p>Azimuth: ${data.azimuth}° (${data.direction})</p>
+            <p>${data.visible ? "Visible above horizon" : "Below horizon"}</p>
+        `;
+
+    } catch (err) {
+        resultDiv.innerHTML = `<p style="color:red">Request failed</p>`;
+    }
+}
+</script>
+
 </body>
 </html>
