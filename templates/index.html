@@ -3,64 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Celestial Position Tracker</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #0b0e1a;
-            color: #eaeaea;
-            padding: 40px;
-        }
-        input, button {
-            padding: 8px;
-            margin: 6px 0;
-            width: 300px;
-        }
-        button {
-            cursor: pointer;
-        }
-        .card {
-            margin-top: 30px;
-            padding: 20px;
-            width: 320px;
-            border-radius: 14px;
-            background: linear-gradient(160deg, #11152b, #050713);
-            box-shadow: 0 0 25px rgba(120,140,255,0.25);
-            opacity: 0;
-            transform: translateY(15px);
-            transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.6s ease, filter 0.6s ease;
-        }
-        .visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .dimmed {
-            filter: grayscale(70%) brightness(0.7);
-            box-shadow: 0 0 10px rgba(100,100,100,0.2);
-        }
-        .glow {
-            box-shadow: 0 0 35px rgba(160,190,255,0.6);
-        }
-
-        /* Compass */
-        .compass {
-            margin: 20px auto;
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 2px solid #555;
-            position: relative;
-        }
-        .arrow {
-            width: 4px;
-            height: 50px;
-            background: #9bb2ff;
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform-origin: bottom center;
-            transition: transform 0.8s ease;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
@@ -77,8 +20,9 @@
 
 <button onclick="submitQuery()">Find Position</button>
 
-<div id="result" class="card">
+<div id="result" class="card hidden">
     <h3 id="obj-name"></h3>
+    <img id="obj-img" src="" alt="Celestial object" class="celestial-img">
     <div class="compass">
         <div class="arrow"></div>
     </div>
@@ -132,6 +76,10 @@ async function submitQuery() {
 
         // Show card with appropriate style
         resultDiv.classList.add("visible", data.visible ? "glow" : "dimmed");
+
+        // Dynamically set celestial image
+        const imgPath = `/static/assets/${data.object.toLowerCase()}.png`;
+        document.getElementById("obj-img").src = imgPath;
 
     } catch (err) {
         objName.textContent = "";
