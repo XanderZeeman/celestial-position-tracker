@@ -32,12 +32,11 @@
 </div>
 
 <script>
-// ------------------- Starfield -------------------
+/* Starfield creation */
 function createStarfield(numStars = 150) {
     const container = document.createElement("div");
     container.id = "starfield";
     document.body.appendChild(container);
-
     for (let i = 0; i < numStars; i++) {
         const star = document.createElement("div");
         star.classList.add("star");
@@ -52,7 +51,7 @@ function createStarfield(numStars = 150) {
 }
 createStarfield();
 
-// ------------------- Query Handler -------------------
+/* Submit query to API */
 async function submitQuery() {
     const resultDiv = document.getElementById("result");
     const objName = document.getElementById("obj-name");
@@ -62,9 +61,9 @@ async function submitQuery() {
     const arrow = resultDiv.querySelector(".arrow");
     const objImg = document.getElementById("obj-img");
 
-    // Reset
+    // Reset card
     resultDiv.classList.remove("visible", "glow", "dimmed");
-    objImg.className = "celestial-img"; // reset animation
+    objImg.className = "celestial-img";
     objName.textContent = altP.textContent = azP.textContent = visP.textContent = "Calculating…";
 
     const payload = {
@@ -88,38 +87,26 @@ async function submitQuery() {
             return;
         }
 
-        // ------------------- Update Card -------------------
+        // Set card content
         objName.textContent = data.object;
         altP.textContent = `Altitude: ${data.altitude}°`;
         azP.textContent = `Azimuth: ${data.azimuth}° (${data.direction})`;
         visP.textContent = data.visible ? "Visible above horizon" : "Below horizon";
 
-        // Celestial image
-        let planetName = data.object.toLowerCase().trim();
+        // Set planet image
+        const planetName = data.object.toLowerCase().trim();
         objImg.src = `/static/assets/images/${planetName}.png`;
-
-        // Fallback to webp if PNG fails
-        objImg.onerror = function() {
-        objImg.onerror = null; // prevent infinite loop
-        objImg.src = `/static/assets/images/${planetName}.webp`;
-        };
-
         setTimeout(() => objImg.classList.add("visible", "floating"), 50);
 
-        // Compass rotation
+        // Compass arrow rotation
         arrow.style.transform = `rotate(${data.azimuth}deg)`;
 
-        // Card visibility & glow
+        // Card visibility & glow/dim
         resultDiv.classList.add("visible", data.visible ? "glow" : "dimmed");
 
-        // Background day/night
-        if (data.altitude > 0) {
-            document.body.classList.add("day");
-            document.body.classList.remove("night");
-        } else {
-            document.body.classList.add("night");
-            document.body.classList.remove("day");
-        }
+        // Day/night background
+        document.body.classList.toggle("day", data.altitude > 0);
+        document.body.classList.toggle("night", data.altitude <= 0);
 
     } catch (err) {
         objName.textContent = "";
