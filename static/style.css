@@ -2,11 +2,11 @@
 body {
     font-family: Arial, sans-serif;
     background: #0b0e1a;
-    color: #eaeaea;
+    color: #eaeaea;      
     padding: 40px;
-    transition: background 1s ease, color 1s ease;
 }
 
+/* Inputs and button */
 input, button {
     padding: 8px;
     margin: 6px 0;
@@ -23,8 +23,9 @@ button {
     padding: 20px;
     width: 320px;
     border-radius: 14px;
-    background: linear-gradient(160deg, #11152b, #050713);
+    background: #000;       
     box-shadow: 0 0 25px rgba(120,140,255,0.25);
+    color: #fff;            
     opacity: 0;
     transform: translateY(20px) scale(0.95);
     transition: opacity 0.7s ease, transform 0.7s ease, box-shadow 0.6s ease, filter 0.6s ease;
@@ -44,19 +45,6 @@ button {
     box-shadow: 0 0 10px rgba(100,100,100,0.2);
 }
 
-/* Ensure card text is readable */
-.card h3, .card p {
-    color: inherit;
-}
-
-body.night .card h3, body.night .card p {
-    color: #eaeaea;
-}
-
-body.day .card h3, body.day .card p {
-    color: #111;
-}
-
 /* ------------------- Compass ------------------- */
 .compass {
     margin: 20px auto;
@@ -70,7 +58,7 @@ body.day .card h3, body.day .card p {
 .arrow {
     width: 4px;
     height: 50px;
-    background: red;
+    background: red;   
     position: absolute;
     top: 10px;
     left: 50%;
@@ -103,17 +91,6 @@ body.day .card h3, body.day .card p {
     0% { transform: translateY(0) scale(1); }
     50% { transform: translateY(-8px) scale(1.05); }
     100% { transform: translateY(0) scale(1); }
-}
-
-/* ------------------- Backgrounds ------------------- */
-body.day {
-    background: linear-gradient(to bottom, #87ceeb, #f0f8ff);
-    color: #111;
-}
-
-body.night {
-    background: linear-gradient(to bottom, #0b0e1a, #11152b);
-    color: #eaeaea;
 }
 
 /* ------------------- Starfield ------------------- */

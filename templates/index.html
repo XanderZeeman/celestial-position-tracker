@@ -96,6 +96,10 @@ async function submitQuery() {
         // Set planet image
         const planetName = data.object.toLowerCase().trim();
         objImg.src = `/static/assets/images/${planetName}.png`;
+        objImg.onerror = function() {
+            objImg.onerror = null; // prevent infinite loop
+            objImg.src = `/static/assets/images/${planetName}.webp`;
+        };
         setTimeout(() => objImg.classList.add("visible", "floating"), 50);
 
         // Compass arrow rotation
