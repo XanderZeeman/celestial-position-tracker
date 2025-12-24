@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request
-from astronomy import get_local_position, azimuth_to_direction
-from geolocation import get_observer_location
+from src.astronomy import get_local_position, azimuth_to_direction, get_observer_location
 from datetime import datetime
 from skyfield.api import load
 
