@@ -19,9 +19,11 @@ button {
 
 /* ------------------- Card ------------------- */
 .card {
-    margin: 0 auto 0 auto;    /* Centre horizontally, changes to first value will uncentre card */
+    margin: 0 auto;    /* Centre horizontally, changes to first value will uncentre card */
     padding: 20px;   
     width: 320px;
+    position: relative;
+    top: -180px;
     border-radius: 14px;
     background: #000;       
     box-shadow: 0 0 25px rgba(120,140,255,0.25);
