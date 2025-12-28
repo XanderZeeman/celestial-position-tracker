@@ -19,8 +19,8 @@ button {
 
 /* ------------------- Card ------------------- */
 .card {
-    margin-top: 30px;
-    padding: 20px;
+    margin: 0 auto 0 auto;    /* Centre horizontally, changes to first value will uncentre card */
+    padding: 20px;   
     width: 320px;
     border-radius: 14px;
     background: #000;       
@@ -105,7 +105,7 @@ button {
 }
 
 .star {
-    position: absolute;
+    position: absolute; 
     background: white;
     border-radius: 50%;
     opacity: 0.8;
